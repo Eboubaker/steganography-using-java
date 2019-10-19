@@ -150,7 +150,7 @@ public class Data_Inserter{
 			}
 		}
 		long dataLength = 0;
-		/*get data size*/{
+		/*get data size */{
 			byte[] sizeAsBytes = new byte[8];
 			for(int i = 0; i < 8; i++) 
 				sizeAsBytes[i] = storedData.get(i);
