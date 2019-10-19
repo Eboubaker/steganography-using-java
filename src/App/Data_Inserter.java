@@ -134,7 +134,7 @@ public class Data_Inserter{
 		int trimmer = (int)Math.pow(2,bitcount)-1;
 		for(int c : imgChannelsData) 
 			imgDataChunks.add(new App.Byte(c & trimmer));
-		int value = 0;
+		int value = 0 ;
 		int index = 0;
 		ArrayList<java.lang.Byte> storedData = new ArrayList<>();
 		for(App.Byte b : imgDataChunks) {
