@@ -1,4 +1,4 @@
-package App;
+package main;
 
 import java.awt.Graphics;
 import java.awt.Image;
@@ -9,30 +9,30 @@ import java.awt.image.MemoryImageSource;
 
 import javax.imageio.ImageIO;
 
-public class Pixels{
-	public static BufferedImage getImageFromArray(int[] pixels, int width, int height) {
+public class PixelsHandler{
+	public static BufferedImage getImageFromArray(int[] pixels, int width, int height, int type) {
 	    MemoryImageSource mis = new MemoryImageSource(width, height, pixels, 0, width);
 	    Toolkit tk = Toolkit.getDefaultToolkit();
 	    Image im = tk.createImage(mis);
-	    BufferedImage bi = new BufferedImage(im.getWidth(null),im.getHeight(null),BufferedImage.TYPE_INT_ARGB);
+	    BufferedImage bi = new BufferedImage(im.getWidth(null),im.getHeight(null), type);
 		Graphics bg = bi.getGraphics();
 		bg.drawImage(im, 0, 0, null);
 		bg.dispose();
 	    return bi;
 	}
 	public static int argbtopixel(int alpha, int red, int green, int blue) {
-		int ret =  alpha << 24 | (red << 16) | (green << 8) | blue;
+		int ret =  (alpha << 24) | (red << 16) | (green << 8) | blue;
 	    return ret;
 	}
 	public static int rgbtopixel(int red, int green, int blue) {
-		int ret =  255 << 24 | (red << 16) | (green << 8) | blue;
+		int ret =  (255 << 24) | (red << 16) | (green << 8) | blue;
 	    return ret;
-	}
-	public static int green(int pixel) {
-		return (pixel >> 8) & 0xff;
 	}
 	public static int red(int pixel) {
 		return (pixel >> 16) & 0xff;
+	}
+	public static int green(int pixel) {
+		return (pixel >> 8) & 0xff;
 	}
 	public static int blue(int pixel) {
 		return pixel & 0xff;
@@ -41,7 +41,25 @@ public class Pixels{
 		return (pixel >> 24) & 0xff;
 	}
 	
+	public static int[] getPixelsArray2(BufferedImage image) {
+	      int width = image.getWidth();
+	      int height = image.getHeight();
+	      int[][] result = new int[height][width];
 
+	      for (int row = 0; row < height; row++) {
+	         for (int col = 0; col < width; col++) {
+	            result[row][col] = image.getRGB(col, row);
+	         }
+	      }
+	      int ret[] = new int[width*height];
+	      for (int row = 0; row < height; row++) {
+		         for (int col = 0; col < width; col++) {
+		        	 int i = col + row * width;
+		        	 ret[i] = result[row][col];
+		         }
+	      }
+	      return ret;
+	   }
 public static int[] getPixelsArray(BufferedImage image) {
 		final byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
 		int[] result = new int[image.getWidth() * image.getHeight()];
