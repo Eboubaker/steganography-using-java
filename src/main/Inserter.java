@@ -16,6 +16,8 @@ import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
 
 import data.ByteBits;
+import essentials.PixelsHandler;
+import essentials.Tools;
 
 //TODO: 
 //use arrays instead of ArrayList to increase the speed

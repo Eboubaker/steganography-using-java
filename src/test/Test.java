@@ -13,7 +13,54 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import Logger.Debug;
+import main.Main;
+import main.MetaDataExtractor;
+
+
+
+
+
+
 public class Test {
+	public static void main() {
+		
+		File s = Main.getResource("sample1.jpg");
+		MetaDataExtractor.showPossibleModes(s, 8,1024);
+		System.out.println("🏴".getBytes().length);
+		BufferedImage img = null;
+		try {
+			img = essentials.PixelsHandler.readSubImage(s, 0, 0, 10, 1);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		int bitcount = 3;
+		boolean useAlpha = true;
+		System.out.println(1+(int)(2.0 / (bitcount * (useAlpha ? 4 : 3) / 8.0 )));
+		Debug.log("" + new Color(img.getRGB(5, 0)).getBlue());
+		/*----------*/
+		System.exit(0);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public static void main99(String args[]) throws Exception {
 		
 		int a = 123, r = 231, g = 50, b = 16;
@@ -43,12 +90,17 @@ public class Test {
 		System.out.println(PixelsHandler.blue(PixelsHandler.getPixelsArray(img2)[0]));
 		
 	}
+	
+	
 	public static int ARGBtoPixel(int alpha, int red, int green, int blue,boolean useAlpha) {
 		if(!useAlpha)
 			alpha = 255;
 		int pixel =  (alpha << 24) | (red << 16) | (green << 8) | blue;
 	    return pixel;
 	}
+	
+	
+	
 	public static BufferedImage getImageFromArray(int[] pixels, int width, int height, int type) {
 	    MemoryImageSource mis = new MemoryImageSource(width, height, pixels, 0, width);
 	    Toolkit tk = Toolkit.getDefaultToolkit();
@@ -59,6 +111,8 @@ public class Test {
 		bg.dispose();
 	    return bi;
 	}
+	
+	
 	public static void main3(String args[]) throws Exception {
 		var arr = new ArrayList<Integer>();
 		for(int i = -128; i < 128; i++) {
@@ -69,6 +123,9 @@ public class Test {
 			System.out.println(i + " -> " + arr.get(i+128) + " || " + Tools.decimalToBinary(i, 8) + " -> " + Tools.decimalToBinary(arr.get(i+128), 8));
 		}
 	}
+	
+	
+	
 	public static void main0(String[] args) throws Exception{
 		File f = new File("E:\\Programming\\Processing\\clone\\src\\test.png");
 		var imgChannelsData = new ArrayList<Integer> ();

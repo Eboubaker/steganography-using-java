@@ -8,26 +8,69 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import data.ByteBits;
+import essentials.PixelsHandler;
+import essentials.Tools;
 
 public class Extractor {
 	//TODO: use arrays instead of ArrayList to increase the speed
-	ArrayList<Byte> extractData(File imgfile, int bitcount, boolean usingAlpha) throws IOException{
+	public static ArrayList<Short> extractRawData(BufferedImage img, int bitcount, boolean usingAlpha){
 		if(bitcount > 8)
 			throw new IndexOutOfBoundsException(bitcount);
-		BufferedImage img = ImageIO.read(imgfile);
 		if(usingAlpha && !img.getColorModel().hasAlpha()) 
 			throw new UnsupportedOperationException("This image doesn't have Alpha channels");
-		int[] imgPixels = PixelsHandler.getPixelsArray2(img);
 		var imgChannelsData = new ArrayList<Integer>();
 		if(usingAlpha)
-			for(int i: imgPixels) {
+			for(int i: PixelsHandler.getPixelsArray2(img)) {
 				imgChannelsData.add(PixelsHandler.red(i));
 				imgChannelsData.add(PixelsHandler.green(i));
 				imgChannelsData.add(PixelsHandler.blue(i));
 				imgChannelsData.add(PixelsHandler.alpha(i));
 			}
 		else
-			for(int i: imgPixels) {
+			for(int i: PixelsHandler.getPixelsArray2(img)) {
+				imgChannelsData.add(PixelsHandler.red(i));
+				imgChannelsData.add(PixelsHandler.green(i));
+				imgChannelsData.add(PixelsHandler.blue(i));
+			}
+		
+		ArrayList<ByteBits> imgDataChunks = new ArrayList<>();
+		for(int c : imgChannelsData) 
+			imgDataChunks.add(new ByteBits(c, bitcount));
+		
+		int value = 0;
+		int index = 0;
+		ArrayList<Short> storedData = new ArrayList<>();
+		for(ByteBits b : imgDataChunks) {
+			while(b.hasNext()) {
+				value += b.next();
+				if(index != 7) //TODO: find a better way to handle this exception
+					value <<= 1;
+				index++;
+				if(index == 8) {
+					storedData.add((short)value);
+					index = 0;
+					value = 0;
+				}
+			}
+		}
+		return storedData;
+	}
+	ArrayList<Byte> extractData(File imgfile, int bitcount, boolean usingAlpha) throws IOException{
+		if(bitcount > 8)
+			throw new IndexOutOfBoundsException(bitcount);
+		BufferedImage img = ImageIO.read(imgfile);
+		if(usingAlpha && !img.getColorModel().hasAlpha()) 
+			throw new UnsupportedOperationException("This image doesn't have Alpha channels");
+		var imgChannelsData = new ArrayList<Integer>();
+		if(usingAlpha)
+			for(int i: PixelsHandler.getPixelsArray2(img)) {
+				imgChannelsData.add(PixelsHandler.red(i));
+				imgChannelsData.add(PixelsHandler.green(i));
+				imgChannelsData.add(PixelsHandler.blue(i));
+				imgChannelsData.add(PixelsHandler.alpha(i));
+			}
+		else
+			for(int i: PixelsHandler.getPixelsArray2(img)) {
 				imgChannelsData.add(PixelsHandler.red(i));
 				imgChannelsData.add(PixelsHandler.green(i));
 				imgChannelsData.add(PixelsHandler.blue(i));
@@ -43,10 +86,10 @@ public class Extractor {
 		int value = 0;
 		int index = 0;
 		ArrayList<Short> storedData = new ArrayList<>();
-		for(data.ByteBits b : imgDataChunks) {
+		for(ByteBits b : imgDataChunks) {
 			while(b.hasNext()) {
 				value += b.next();
-				if(index != 7) //TODO: find a better way
+				if(index != 7) //TODO: find a better way to handle this exception
 					value <<= 1;
 				index++;
 				if(index == 8) {

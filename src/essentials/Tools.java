@@ -1,8 +1,9 @@
-package main;
+package essentials;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
@@ -24,9 +25,9 @@ public class Tools{
 		return Integer.toBinaryString(i);
 	}
 	
-	public static float map(float value, float start1, float stop1, float start2, float stop2) {
-		return ((value - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
-	}
+//	public static float map(float value, float start1, float stop1, float start2, float stop2) {
+//		return ((value - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
+//	}
 	public static byte[] longToBytes(long l) {
 		byte[] ret = new byte[8];
 		//16254

@@ -1,13 +1,20 @@
-package main;
+package essentials;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.MemoryImageSource;
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 
 public class PixelsHandler{
 	public static BufferedImage getImageFromArray(int[] pixels, int width, int height, int type) {
@@ -41,6 +48,25 @@ public class PixelsHandler{
 		return (pixel >> 24) & 0xff;
 	}
 	
+	public static BufferedImage readSubImage(File img, int x, int y, int w, int h) throws IOException {
+//		w+=h;h=w-h;w=w-h;//swap
+		Rectangle sourceRegion = new Rectangle(x, y, w, h); // The region  to extract
+		ImageInputStream stream = ImageIO.createImageInputStream(img); // File or input stream
+		Iterator<ImageReader> readers = ImageIO.getImageReaders(stream);
+		if (readers.hasNext()) {
+		    ImageReader reader = readers.next();
+		    reader.setInput(stream);
+	
+		    ImageReadParam param = reader.getDefaultReadParam();// we get the read parameter
+		    param.setSourceRegion(sourceRegion); // Set region
+	
+		    BufferedImage image = reader.read(0, param); // Will read only the region specified
+		    return image;
+		}
+		//if we reached here it means there is an error.
+		throw new IOException("Not a known image or a corrupt file: " + img.getAbsolutePath());
+	}
+
 	public static int[] getPixelsArray2(BufferedImage image) {
 	      int width = image.getWidth();
 	      int height = image.getHeight();
@@ -59,8 +85,9 @@ public class PixelsHandler{
 		         }
 	      }
 	      return ret;
-	   }
-public static int[] getPixelsArray(BufferedImage image) {
+	}
+	
+	public static int[] getPixelsArray(BufferedImage image) {
 		final byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
 		int[] result = new int[image.getWidth() * image.getHeight()];
 		if (image.getAlphaRaster() != null) 
@@ -85,9 +112,11 @@ public static int[] getPixelsArray(BufferedImage image) {
 		
 		return result;
 	}
+	
 	public static int[] trimPixels(int [] pixels, int trimmer, int stop) {
 		for(int i = 0; i < stop; i++) 
 			pixels[i] = argbtopixel(alpha(pixels[i] & trimmer), red(pixels[i] & trimmer), green(pixels[i] & trimmer), blue(pixels[i] & trimmer));
 		return pixels;
 	}
+	
 }
