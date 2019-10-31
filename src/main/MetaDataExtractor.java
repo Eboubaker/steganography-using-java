@@ -13,6 +13,8 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 
+import org.junit.jupiter.api.Test;
+
 import data.Range;
 import essentials.PixelsHandler;
 import essentials.Tools;
@@ -40,9 +42,7 @@ public class MetaDataExtractor {
 						nameLengthIndex = new Range(12,13),
 						nameIndex = new Range(13,-1);//will be set after reading the nameLengthIndex
 						
-	public static int getPartNumber(ArrayList<Byte> imgRawData) {
-		return imgRawData.get(0);
-	}
+
 	public static long getImageHolderSize(File img, int bitcount, int channels, int offest) {
 		Dimension d = null;
 		try {
@@ -84,7 +84,7 @@ public class MetaDataExtractor {
 	  }
 	  throw new IOException("Not a known image file: " + imgFile.getAbsolutePath());
 	}
-	
+	@Test
 	public static int readImagePartNumber(File imgfile, int bitcount, boolean useAlpha) throws IOException {
 		int dataPixels = 1+(int)(((float)partIndex.end) / (bitcount * (useAlpha ? 4 : 3) / 8.0 ));// bitcount * (useAlpha ? 4 : 3) / 8 * 2
 		Dimension d = getImageDimensions(imgfile);
@@ -95,7 +95,7 @@ public class MetaDataExtractor {
 		int partindex = datachunk.get(0) | (datachunk.get(1) << 0x0f);
 		return partindex;
 	}
-	
+	@Test
 	public static int readTotalParts(File firstImageFile, int bitcount, boolean useAlpha) throws IOException {
 		int dataPixels = 1+(int)(((float)partsCountIndex.end) / (bitcount * (useAlpha ? 4 : 3) / 8.0 ));// bitcount * (useAlpha ? 4 : 3) / 8 * 2
 		Dimension d = getImageDimensions(firstImageFile);
