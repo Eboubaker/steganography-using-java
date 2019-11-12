@@ -13,13 +13,11 @@ public class ByteBits{
 	public boolean hasNext() {
 		return index > -1;
 	}
-//	public short next() {
-//		short n = (short) ((b&0b1000_0000) >> 7);
-//		n &= 0b0111_1111;
-//		b <<= 1;
-//		index --;
-//		return n;
-//	}
+	/**
+	 * reads bits from left to right.
+	 * 
+	 * @return the next bit in this byte.
+	 */
 	public short next() {
 		int n = (b&(1<<index))>>index;
 		index --;

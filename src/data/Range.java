@@ -6,4 +6,7 @@ public class Range {
 		this.start = start;
 		this.end = end;
 	}
+	public int length() {
+		return end - start;
+	}
 }

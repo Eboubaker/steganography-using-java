@@ -1,6 +1,8 @@
 package essentials;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -17,6 +19,27 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
 public class PixelsHandler{
+	public static int getRequiredPixels(int bytescount, int bitcount, int channels) {
+		float val = 1.0f * bytescount * 8 / bitcount / channels;
+		return val - (int) (val) == 0 ? (int) val: (int)(val + 1);
+		
+	}
+	
+	public static Dimension getRequiredDimension(Dimension image_dimensions, int pixelsLength) {
+		int h;
+		if(pixelsLength % image_dimensions.width == 0) {
+			h = pixelsLength / image_dimensions.width;
+		}else {
+			h = (int) ((float)(pixelsLength) / image_dimensions.width + 1);
+		}
+		return new Dimension(image_dimensions.width, h);
+	}
+	
+	public static int getImageHolderSize(Dimension d, int bitcount, int channels) {
+		long l = d.height * d.width;
+		l = l * channels * bitcount / 8; 
+		return (int) l;
+	}
 	public static BufferedImage getImageFromArray(int[] pixels, int width, int height, int type) {
 	    MemoryImageSource mis = new MemoryImageSource(width, height, pixels, 0, width);
 	    Toolkit tk = Toolkit.getDefaultToolkit();
@@ -48,15 +71,15 @@ public class PixelsHandler{
 		return (pixel >> 24) & 0xff;
 	}
 	
-	public static BufferedImage readSubImage(File img, int x, int y, int w, int h) throws IOException {
+	public static BufferedImage readSubImage(File img, Dimension d) throws IOException {
 //		w+=h;h=w-h;w=w-h;//swap
-		Rectangle sourceRegion = new Rectangle(x, y, w, h); // The region  to extract
+		Rectangle sourceRegion = new Rectangle(0, 0, d.width, d.height); // The region  to extract
 		ImageInputStream stream = ImageIO.createImageInputStream(img); // File or input stream
 		Iterator<ImageReader> readers = ImageIO.getImageReaders(stream);
 		if (readers.hasNext()) {
 		    ImageReader reader = readers.next();
 		    reader.setInput(stream);
-	
+		   
 		    ImageReadParam param = reader.getDefaultReadParam();// we get the read parameter
 		    param.setSourceRegion(sourceRegion); // Set region
 	
@@ -66,7 +89,18 @@ public class PixelsHandler{
 		//if we reached here it means there is an error.
 		throw new IOException("Not a known image or a corrupt file: " + img.getAbsolutePath());
 	}
-
+	
+	public static BufferedImage resize(BufferedImage inputImage, double percent) throws IOException {
+        int scaledWidth = (int) (inputImage.getWidth() * percent);
+        int scaledHeight = (int) (inputImage.getHeight() * percent);
+        BufferedImage outputImage = new BufferedImage(scaledWidth,
+                scaledHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = outputImage.createGraphics();
+        g2d.drawImage(inputImage, 0, 0, scaledWidth, scaledHeight, null);
+        g2d.dispose();
+        return outputImage;
+    }
+	
 	public static int[] getPixelsArray2(BufferedImage image) {
 	      int width = image.getWidth();
 	      int height = image.getHeight();
@@ -112,11 +146,6 @@ public class PixelsHandler{
 		
 		return result;
 	}
-	
-	public static int[] trimPixels(int [] pixels, int trimmer, int stop) {
-		for(int i = 0; i < stop; i++) 
-			pixels[i] = argbtopixel(alpha(pixels[i] & trimmer), red(pixels[i] & trimmer), green(pixels[i] & trimmer), blue(pixels[i] & trimmer));
-		return pixels;
-	}
+
 	
 }
